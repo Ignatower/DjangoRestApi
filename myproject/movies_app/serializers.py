@@ -5,10 +5,10 @@ from movies_app.models import Query, File
 class QuerySerializer(serializers.ModelSerializer):
     class Meta:
         model = Query
-        fields = ['id', 'title', 'value']
+        fields = ['title', 'value']
 
 
 class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
-        fields = ['id', 'file']
+        fields = ['file']

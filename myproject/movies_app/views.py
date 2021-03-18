@@ -10,43 +10,31 @@ from movies_app.queries import handle_queries
 
 MOVIES = 'movies.csv'
 
+
 class QueryList(APIView):
     """
-    List all Queries.
+    List all queries, get query, and create a file.
     """
+    def get_query(self, title):
+        try:
+            return Query.objects.get(title=title)
+        except Query.DoesNotExist:
+            raise Http404
+
     def get(self, request, format=None):
         queries = Query.objects.all()
         serializer = QuerySerializer(queries, many=True)
         return Response(serializer.data)
 
-
-class QueryDetail(APIView):
-    """
-    Retrieve query instance.
-    """
-    def get_object(self, pk):
-        try:
-            return Query.objects.get(pk=pk)
-        except Query.DoesNotExist:
-            raise Http404
-
-    def get(self, request, pk, format=None):
-        Query = self.get_object(pk)
-        serializer = QuerySerializer(Query)
-        return Response(serializer.data)
-
-
-class FileList(APIView):
-    """
-    List all files and create a file.
-    """
-    def get(self, request, format=None):
-        files = File.objects.all()
-        serializer = FileSerializer(files, many=True)
-        return Response(serializer.data)
-
-    # url = 'http://127.0.0.1:8000/files/'
-    # r = requests.post(url, files={'file': open('your_file.txt', 'rb')})
+    def put(self, request, format=None):
+        if 'query' in request.data.keys():
+            title = request.data['query']
+            query = self.get_query(title)
+            serializer = QuerySerializer(query)
+            return Response(serializer.data)
+            
+        return Response(status=status.HTTP_404_NOT_FOUND)
+        
     # the file must not be empty
     def post(self, request, format=None):
         serializer = FileSerializer(data=request.data)
