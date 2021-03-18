@@ -11,7 +11,10 @@ $ python manage.py runserver
 
 ## API end points
 ```
-$ here endpoints
+ here endpoints
+
+	http://127.0.0.1:8000/files/
+
+	http://127.0.0.1:8000/queries/
 ```
   
-la API esta disponible en `http://127.0.0.1:8000/upload/`
