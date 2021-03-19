@@ -26,10 +26,10 @@ class QueryList(APIView):
         except Query.DoesNotExist:
             raise Http404
 
-    # get a query or list all queries
+    # Get a query or list all queries
     def get(self, request, format=None, *args, **kwargs):
         """
-        if url is ../mytitle/ then  get the query that its title is
+        If url is ../mytitle/ then  get the query that its title is
         mytitle. Otherwise, get and list all queries
         """
         queries = Query.objects.all()
@@ -42,10 +42,10 @@ class QueryList(APIView):
 
         return Response(serializer.data)
         
-    # post a file, the file must not be empty
+    # Post a file, the file must not be empty
     def post(self, request, format=None):
         """
-        if the file is MOVIES then create two queries
+        If the file is MOVIES then create two queries
         """
         serializer = FileSerializer(data=request.data)
         if serializer.is_valid():
