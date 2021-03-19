@@ -15,8 +15,12 @@ class QueryList(APIView):
     """
     List all queries, get a query, and create a file.
     """
-    # get query by title
-    def get_query(self, title):
+
+    def check_if_query_exists_by_title(self, title):
+        count = Query.objects.filter(title = title).count()
+        return count != 0
+
+    def get_query_by_title(self, title):
         try:
             return Query.objects.get(title=title)
         except Query.DoesNotExist:
@@ -32,7 +36,7 @@ class QueryList(APIView):
         serializer = QuerySerializer(queries, many=True)
         if self.kwargs:
             querytitle = self.kwargs['querytitle']
-            query = self.get_query(querytitle)
+            query = self.get_query_by_title(querytitle)
             serializer = QuerySerializer(query)
             return Response(serializer.data)
 
