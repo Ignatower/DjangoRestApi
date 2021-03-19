@@ -26,7 +26,7 @@ or
 $ r = requests.get(url+YOUR_QUERY)
 $ r.text
 
-YOUR_QUERY can be: 'total', 'average'
+YOUR_QUERY can be: 'total/', 'average/'
 
 you have to post movies.csv file in order to make that queries
 ```
