@@ -2,7 +2,6 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-
 from movies_app.models import Query, File
 from movies_app.serializers import QuerySerializer, FileSerializer
 from movies_app.queries import handle_queries
@@ -15,11 +14,6 @@ class QueryList(APIView):
     """
     List all queries, get a query, and create a file.
     """
-
-    def check_if_query_exists_by_title(self, title):
-        count = Query.objects.filter(title = title).count()
-        return count != 0
-
     def get_query_by_title(self, title):
         try:
             return Query.objects.get(title=title)
