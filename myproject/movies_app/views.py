@@ -13,30 +13,36 @@ MOVIES = 'movies.csv'
 
 class QueryList(APIView):
     """
-    List all queries, get query, and create a file.
+    List all queries, get a query, and create a file.
     """
+    # get query by title
     def get_query(self, title):
         try:
             return Query.objects.get(title=title)
         except Query.DoesNotExist:
             raise Http404
 
-    def get(self, request, format=None):
+    # get a query or list all queries
+    def get(self, request, format=None, *args, **kwargs):
+        """
+        if url is ../mytitle/ then  get the query that its title is
+        mytitle. Otherwise, get and list all queries
+        """
         queries = Query.objects.all()
         serializer = QuerySerializer(queries, many=True)
-        return Response(serializer.data)
-
-    def put(self, request, format=None):
-        if 'query' in request.data.keys():
-            title = request.data['query']
-            query = self.get_query(title)
+        if self.kwargs:
+            querytitle = self.kwargs['querytitle']
+            query = self.get_query(querytitle)
             serializer = QuerySerializer(query)
             return Response(serializer.data)
-            
-        return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.data)
         
-    # the file must not be empty
+    # post a file, the file must not be empty
     def post(self, request, format=None):
+        """
+        if the file is MOVIES then create two queries
+        """
         serializer = FileSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
