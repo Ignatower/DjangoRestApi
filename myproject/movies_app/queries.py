@@ -15,16 +15,25 @@ def convert_amount_to_dollar(currency, amount):
     else:
         return amount
 
-def convert_budget_to_amount(budget):
+def convert_budget_to_dollar(budget):
+    """"
+    budget is a string of the form: 'currency amount'
+    Return: the amount (float) converted to dollar
+    """
     amount = budget.split(' ')
     return convert_amount_to_dollar(amount[0], int(amount[1]))
 
 def handle_queries():
+    """
+    Return (avg_cost, total_cost), where:
+        avg_cost is: average cost of USA's movies
+        total_cost is: total cost (budget) of USA's movies 
+    """
     dirname = os.path.split(os.path.abspath(__file__))[0] + '/files/movies.csv'
     df = pd.read_csv(dirname, low_memory=False)
     df = df[df['country'] == 'USA']['budget']
     df = df.fillna('$ 0')
     count_movies = df.count()
-    total_cost = df.apply(convert_budget_to_amount).sum()
+    total_cost = df.apply(convert_budget_to_dollar).sum()
     avg_cost = total_cost/count_movies
     return (int(avg_cost), int(total_cost))
