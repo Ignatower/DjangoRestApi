@@ -47,17 +47,20 @@ class QueryList(APIView):
             filename = request.FILES['file'].name
             # if the file is the movies csv, handle the queries
             if filename == MOVIES:
-                avg, total = handle_queries()
-                total = '$ ' + str(total)
-                query = Query()
-                # create query instance of the total cost of the movies
-                query.create('total', total)
-                query.save()
-                avg = '$ ' + str(avg)
-                query = Query()
-                # create query instance of the avg cost of the movies
-                query.create('average', avg)
-                query.save()
+                # if the queries do not exist (i.e. MOVIES file have not been created
+                # in the past) then, create total and avg queriesS
+                if not Query.objects.filter(title='total').count():
+                    avg, total = handle_queries()
+                    total = '$ ' + str(total)
+                    query = Query()
+                    # create query instance of the total cost of the movies
+                    query.create('total', total)
+                    query.save()
+                    avg = '$ ' + str(avg)
+                    query = Query()
+                    # create query instance of the avg cost of the movies
+                    query.create('average', avg)
+                    query.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
