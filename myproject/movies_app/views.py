@@ -2,9 +2,10 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from movies_app.models import Query, File
+from movies_app.models import Query, File, Movie
 from movies_app.serializers import QuerySerializer, FileSerializer
-from movies_app.queries import handle_queries
+from movies_app.handle_csv import create_db_from_file, create_queries
+
 
 
 MOVIES = 'movies.csv'
@@ -38,29 +39,19 @@ class QueryList(APIView):
         
     # Post a file, the file must not be empty
     def post(self, request, format=None):
-        """
-        If the file is MOVIES then create two queries
-        """
         serializer = FileSerializer(data=request.data)
+        # if file is valid, then write on disk. 
         if serializer.is_valid():
+            # Save it in ../movies_app/files/
             serializer.save()
             filename = request.FILES['file'].name
-            # if the file is the movies csv, handle the queries
             if filename == MOVIES:
-                # if the queries do not exist (i.e. MOVIES file have not been created
-                # in the past) then, create total and avg queriesS
-                if not Query.objects.filter(title='total').count():
-                    avg, total = handle_queries()
-                    total = '$ ' + str(total)
-                    query = Query()
-                    # create query instance of the total cost of the movies
-                    query.create('total', total)
-                    query.save()
-                    avg = '$ ' + str(avg)
-                    query = Query()
-                    # create query instance of the avg cost of the movies
-                    query.create('average', avg)
-                    query.save()
+                # if MOVIES haven't been posted yet
+                if Movie.objects.count() == 0:
+                    # save the movies in the DB
+                    create_db_from_file(filename)
+                    create_queries()
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

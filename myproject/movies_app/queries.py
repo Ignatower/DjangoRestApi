@@ -1,5 +1,7 @@
 import os
 import pandas as pd
+import numpy as np
+#from movies_app.models import Query
 
 
 # Dictionary of pairs (currency, coefficient), used to convert the different 
@@ -37,3 +39,22 @@ def handle_queries():
     total_cost = df.apply(convert_budget_to_dollar).sum()
     avg_cost = total_cost/count_movies
     return (int(avg_cost), int(total_cost))
+
+
+def create_queries():
+    # if the queries do not exist (i.e. MOVIES file have not been created
+    # in the past) then, create total and avg queriesS
+    if not Query.objects.filter(title='total').count():
+        avg, total = handle_queries()
+        total = '$ ' + str(total)
+        query = Query()
+        # create query instance of the total cost of the movies
+        query.create('total', total)
+        query.save()
+        avg = '$ ' + str(avg)
+        query = Query()
+        # create query instance of the avg cost of the movies
+        query.create('average', avg)
+        query.save()
+
+print(handle_queries())

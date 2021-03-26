@@ -63,4 +63,8 @@ class FileTests(APITestCase):
         response = self.client.post(url, data=file)
         self.assertEqual(Query.objects.filter(title='total').count(), 1)
         self.assertEqual(Query.objects.filter(title='average').count(), 1)
-        
+        q = Query.objects.get(title='total')
+        w = Query.objects.get(title='average')
+        self.assertEqual(q.value, '$ 127088278638')
+        self.assertEqual(w.value, '$ 4457517')
+
