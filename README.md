@@ -3,6 +3,21 @@
 ## Install
 
 ```
+This project uses postgreSQL (https://www.postgresql.org/)
+you need to install it and create a DB with the next properties:
+
+NAME: MOVIESDB
+
+USER: postgres
+
+PASSWORD': postgres
+
+HOST: localhost
+
+PORT: 5432
+
+Then run:
+
 $ pipenv install --dev
 $ pipenv shell
 $ cd /myproject
@@ -13,7 +28,7 @@ $ python manage.py runserver
 ```
 $ python
 $ import requests
-$ url = 'http://127.0.0.1:8000/
+$ url = 'http://127.0.0.1:8000/'
 ```
 
 # GET
