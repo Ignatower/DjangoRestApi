@@ -121,10 +121,12 @@ def create_queries():
         total = '$ ' + str(total)
         query = Query()
         # create query instance of the total cost of the movies
-        query.create('total', total)
+        query.title= 'total'
+        query.value = total
         query.save()
         avg = '$ ' + str(avg)
         query = Query()
         # create query instance of the avg cost of the movies
-        query.create('average', avg)
+        query.title = 'average'
+        query.value = avg
         query.save()
