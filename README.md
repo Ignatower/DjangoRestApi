@@ -16,11 +16,15 @@ HOST: localhost
 
 PORT: 5432
 
-Then run:
+Post is an authorized end point, you must create a user to use it. 
+To create users, read: 
+https://docs.djangoproject.com/en/3.1/topics/auth/default/ 
 
+Then run:
 $ pipenv install --dev
 $ pipenv shell
 $ cd /myproject
+$ python manage.py createsuperuser
 $ python manage.py runserver
 ```
 
@@ -28,7 +32,8 @@ $ python manage.py runserver
 ```
 $ python
 $ import requests
-$ url = 'http://127.0.0.1:8000/'
+$ from requests.auth import HTTPBasicAuth
+$ url = 'http://127.0.0.1:8000/movies/'
 ```
 
 # GET
@@ -48,6 +53,6 @@ you have to post movies.csv file in order to make that queries
 
 # POST
 ```
-$ r = requests.post(url, files={'file': open('your_file.txt', 'rb')})
+$ r = requests.post(url, files={'file': open('your_file.txt', 'rb')}, auth=HTTPBasicAuth('user', 'password'))
 $ r.text
 ```
