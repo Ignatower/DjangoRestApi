@@ -9,22 +9,9 @@ class Query(models.Model):
     def __str__(self):
         return self.title
 
-    # method to handle doing queries in the view
-    def create(self, title, value):
-        self.title = title
-        self.value = value
-
 
 class File(models.Model):
     file = models.FileField(upload_to='movies_app/files')
-
-"""
-class Ball(models.Model):
-    title = models.CharField(max_length=100)
-    year = models.IntegerField()
-    date_published = models.DateField()
-    money = models.FloatField()
-"""
 
 
 class Movie(models.Model):

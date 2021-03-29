@@ -68,7 +68,8 @@ def fix_nan_and_none(df):
         else:
             df[col].fillna(0, inplace=True)
 
-def normalice_db(df):
+# normalize df to save it in DB
+def normalize_db(df):
     fix_year(df)
     fix_date_published(df)
     fix_all_money(df)
@@ -80,8 +81,12 @@ def create_movie(row):
     for field_name in FIELDS:
         setattr(movie, field_name, row[i])
         i += 1
+
     return movie
 
+# save movies objects in DB
+# https://docs.djangoproject.com/en/3.2/ref/models/querysets/#bulk-create
+# https://tech.serhatteker.com/post/2019-09/django-db-bulk-create/
 def create_db(movies_list):
     batch_size = 10000
     while True:
@@ -90,41 +95,16 @@ def create_db(movies_list):
             break
         Movie.objects.bulk_create(batch, batch_size)
 
-# https://tech.serhatteker.com/post/2019-09/django-db-bulk-create/
 def create_db_from_file(movies):
     dirname = DIRNAME + movies
     df = pd.read_csv(dirname, low_memory=False)
     start_time = time.time()
-    normalice_db(df)
+    normalize_db(df)
     movies_list = (create_movie(row) for row in df.itertuples(index=False))
-    print("Normalice + Create movies_list  --- {} seconds ---".format(time.time() - start_time))
+    print("Normalize + Create movies_list  --- {} seconds ---".format(time.time() - start_time))
     start_time = time.time()
     create_db(movies_list)
     print("Create DB TIME --- {} seconds ---".format(time.time() - start_time))
-
-
-def convert_currency_to_coefficient(currency):
-    return DICT_CURRENCY[currency]
-
-# '$ 4457517' avg
-# '$ 127088278638' total
-def handle_queries():
-    """
-    Return (avg_cost, total_cost), where:
-        avg_cost is: average cost of USA's movies
-        total_cost is: total cost (budget) of USA's movies 
-    """
-    dirname = DIRNAME + 'movies.csv'
-    df = pd.read_csv(dirname, low_memory=False)
-    normalice_db(df)
-    df = df[df['country'] == 'USA']
-    count_movies = df['budget'].count()
-    coefficients = df['budget_currency'].apply(convert_currency_to_coefficient)
-    total_cost = df['budget']*coefficients
-    total_cost = total_cost.sum()
-    avg_cost = total_cost/count_movies
-    return (int(avg_cost), int(total_cost))
-
 
 def create_queries():
     # if the queries do not exist (i.e. MOVIES file have not been created
@@ -148,8 +128,3 @@ def create_queries():
         # create query instance of the avg cost of the movies
         query.create('average', avg)
         query.save()
-
-
-#avg, total = handle_queries()
-#print(avg)
-#print(total)

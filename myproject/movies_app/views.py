@@ -50,6 +50,7 @@ class QueryList(APIView):
                 if Movie.objects.count() == 0:
                     # save the movies in the DB
                     create_db_from_file(filename)
+                    # create avg and total queries
                     create_queries()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
