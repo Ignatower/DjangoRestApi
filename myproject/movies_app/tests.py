@@ -1,9 +1,17 @@
+import os
 from rest_framework.test import APITestCase
 from rest_framework import status
 from movies_app.models import Query, File
-import os
+import requests
+from requests.auth import HTTPBasicAuth
+from rest_framework.test import RequestsClient
+from django.contrib.auth.models import User
+from rest_framework.test import force_authenticate, APIRequestFactory
 
-url = 'http://127.0.0.1:8000/'
+from movies_app.views import QueryList
+
+
+url = 'http://127.0.0.1:8000/movies/'
 MOVIES = 'movies.csv'
 
 
@@ -35,36 +43,56 @@ class QueryTests(APITestCase):
         response = self.client.get(url+'mytitasdasdle/')
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    def test_method_not_allowed(self):
+    def test_method_is_forbidden(self):
         """
-        Ensure that the response is 405 if the method is not allowed
+        Ensure that the response is 403 if the method is forbidden
         """
         response = self.client.put(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 class FileTests(APITestCase):
+    def test_post_without_authorization(self):
+        """
+        Ensure that we cann't post without authorization
+        """
+        file={'file': open('hola.txt', 'rb')}
+        response = self.client.post(url, data=file)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_create_file(self):
         """
         Ensure that we can create a file
         """
+        user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+        user.save()
+        factory = APIRequestFactory()
+        view = QueryList.as_view()
         file={'file': open('hola.txt', 'rb')}
-        response = self.client.post(url, data=file)
+        request = factory.post(url, data=file)
+        force_authenticate(request, user=user)
+        response = view(request)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(File.objects.count(), 1)
-
+        
     def test_if_movies_file_is_created_then_queries_total_avg_exists(self):
         """
         Ensure that if we create the movies file, then total and avg 
         queries exist
         """
+        user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+        user.save()
+        factory = APIRequestFactory()
+        view = QueryList.as_view()
         file={'file': open(MOVIES, 'rb')}
-        response = self.client.post(url, data=file)
+        request = factory.post(url, data=file)
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Query.objects.filter(title='total').count(), 1)
         self.assertEqual(Query.objects.filter(title='average').count(), 1)
         q = Query.objects.get(title='total')
         w = Query.objects.get(title='average')
         self.assertEqual(q.value, '$ 127088278638')
         self.assertEqual(w.value, '$ 4457517')
-
+        
