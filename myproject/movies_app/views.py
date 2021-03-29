@@ -2,10 +2,9 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from movies_app.models import Query, File, Movie
+from movies_app.models import Query, Movie
 from movies_app.serializers import QuerySerializer, FileSerializer
 from movies_app.handle_csv import create_db_from_file, create_queries
-
 
 
 MOVIES = 'movies.csv'
