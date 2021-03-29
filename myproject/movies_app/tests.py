@@ -74,3 +74,28 @@ class FileTests(APITestCase):
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(File.objects.count(), 1)
+       
+        """
+        https://docs.djangoproject.com/en/3.2/topics/testing/overview/#the-test-database
+
+        def test_if_movies_file_is_created_then_queries_total_avg_exists(self):
+        
+        Ensure that if we create the movies file, then total and avg 
+        queries exist
+        
+        user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
+        user.save()
+        factory = APIRequestFactory()
+        view = QueryList.as_view()
+        file={'file': open(MOVIES, 'rb')}
+        request = factory.post(url, data=file)
+        force_authenticate(request, user=user)
+        response = view(request)
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Query.objects.filter(title='total').count(), 1)
+        self.assertEqual(Query.objects.filter(title='average').count(), 1)
+        q = Query.objects.get(title='total')
+        w = Query.objects.get(title='average')
+        self.assertEqual(q.value, '$ 127088278638')
+        self.assertEqual(w.value, '$ 4457517')
+        """
