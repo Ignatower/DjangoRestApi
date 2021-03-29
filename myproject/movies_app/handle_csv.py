@@ -3,7 +3,7 @@ import time
 import pandas as pd
 import numpy as np
 from itertools import islice
-from movies_app.models import Movie, Query
+from movies_app.models import Movie, SavedQuery
 
 
 DIRNAME = dirname = os.path.split(os.path.abspath(__file__))[0] + '/files/'
@@ -109,7 +109,7 @@ def create_db_from_file(movies):
 def create_queries():
     # if the queries do not exist (i.e. MOVIES file have not been created
     # in the past) then, create total and avg queries
-    if not Query.objects.filter(title='total').count():
+    if not SavedQuery.objects.filter(title='total').count():
         movies_USA = Movie.objects.filter(country='USA')
         total = 0
         for movie in movies_USA:
@@ -119,13 +119,13 @@ def create_queries():
 
         #avg, total = handle_queries()
         total = '$ ' + str(total)
-        query = Query()
+        query = SavedQuery()
         # create query instance of the total cost of the movies
         query.title= 'total'
         query.value = total
         query.save()
         avg = '$ ' + str(avg)
-        query = Query()
+        query = SavedQuery()
         # create query instance of the avg cost of the movies
         query.title = 'average'
         query.value = avg

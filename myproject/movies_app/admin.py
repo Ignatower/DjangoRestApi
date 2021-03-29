@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import Query, File
+from .models import SavedQuery, File
 
 # Register your models here.
-admin.site.register(Query)
+admin.site.register(SavedQuery)
 admin.site.register(File)

@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from movies_app.models import Query, File
+from movies_app.models import SavedQuery, File
 
 
-class QuerySerializer(serializers.ModelSerializer):
+class SavedQuerySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Query
+        model = SavedQuery
         fields = ['title', 'value']
 
 

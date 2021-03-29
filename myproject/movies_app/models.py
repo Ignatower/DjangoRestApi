@@ -1,7 +1,7 @@
 from django.db import models
 
 
-class Query(models.Model):
+class SavedQuery(models.Model):
     title = models.CharField(max_length=100, default='')
     value = models.CharField(max_length=100, default='')
 

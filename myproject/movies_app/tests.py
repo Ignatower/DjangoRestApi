@@ -1,21 +1,21 @@
 import os
 from rest_framework.test import APITestCase
 from rest_framework import status
-from movies_app.models import Query, File
+from movies_app.models import SavedQuery, File
 import requests
 from requests.auth import HTTPBasicAuth
 from rest_framework.test import RequestsClient
 from django.contrib.auth.models import User
 from rest_framework.test import force_authenticate, APIRequestFactory
 
-from movies_app.views import QueryList
+from movies_app.views import SavedQueryList
 
 
 url = 'http://127.0.0.1:8000/movies/'
 MOVIES = 'movies.csv'
 
 
-class QueryTests(APITestCase):
+class SavedQueryTests(APITestCase):
 
     def test_list_queries(self):
         """
@@ -28,7 +28,7 @@ class QueryTests(APITestCase):
         """
         Ensure that we can get a query by its title if it exists
         """
-        query = Query()
+        query = SavedQuery()
         query.title = 'mytitle'
         query.value = 'myvalue'
         query.save()
@@ -67,7 +67,7 @@ class FileTests(APITestCase):
         user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
         user.save()
         factory = APIRequestFactory()
-        view = QueryList.as_view()
+        view = SavedQueryList.as_view()
         file={'file': open('hola.txt', 'rb')}
         request = factory.post(url, data=file)
         force_authenticate(request, user=user)
@@ -86,16 +86,16 @@ class FileTests(APITestCase):
         user = User.objects.create_user('john', 'lennon@thebeatles.com', 'johnpassword')
         user.save()
         factory = APIRequestFactory()
-        view = QueryList.as_view()
+        view = SavedQueryList.as_view()
         file={'file': open(MOVIES, 'rb')}
         request = factory.post(url, data=file)
         force_authenticate(request, user=user)
         response = view(request)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Query.objects.filter(title='total').count(), 1)
-        self.assertEqual(Query.objects.filter(title='average').count(), 1)
-        q = Query.objects.get(title='total')
-        w = Query.objects.get(title='average')
+        self.assertEqual(SavedQuery.objects.filter(title='total').count(), 1)
+        self.assertEqual(SavedQuery.objects.filter(title='average').count(), 1)
+        q = SavedQuery.objects.get(title='total')
+        w = SavedQuery.objects.get(title='average')
         self.assertEqual(q.value, '$ 127088278638')
         self.assertEqual(w.value, '$ 4457517')
         """

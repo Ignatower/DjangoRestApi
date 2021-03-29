@@ -2,22 +2,22 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from movies_app.models import Query, Movie
-from movies_app.serializers import QuerySerializer, FileSerializer
+from movies_app.models import SavedQuery, Movie
+from movies_app.serializers import SavedQuerySerializer, FileSerializer
 from movies_app.handle_csv import create_db_from_file, create_queries
 
 
 MOVIES = 'movies.csv'
 
 
-class QueryList(APIView):
+class SavedQueryList(APIView):
     """
     List all queries, get a query, and create a file.
     """
     def get_query_by_title(self, title):
         try:
-            return Query.objects.get(title=title)
-        except Query.DoesNotExist:
+            return SavedQuery.objects.get(title=title)
+        except SavedQuery.DoesNotExist:
             raise Http404
 
     # Get a query or list all queries
@@ -26,12 +26,12 @@ class QueryList(APIView):
         If url is ../mytitle/ then  get the query that its title is
         mytitle. Otherwise, get and list all queries
         """
-        queries = Query.objects.all()
-        serializer = QuerySerializer(queries, many=True)
+        queries = SavedQuery.objects.all()
+        serializer = SavedQuerySerializer(queries, many=True)
         if self.kwargs:
             querytitle = self.kwargs['querytitle']
             query = self.get_query_by_title(querytitle)
-            serializer = QuerySerializer(query)
+            serializer = SavedQuerySerializer(query)
             return Response(serializer.data)
 
         return Response(serializer.data)
